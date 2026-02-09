@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AuthControllerTest {
 
     private static final String LOGIN_URL = "/api/v1/auth/login";
@@ -34,16 +34,18 @@ class AuthControllerTest {
     private MockMvc mockMvc;
 
     @BeforeAll
-    static void setUp(@Autowired UserRepository userRepository,
-                       @Autowired PasswordEncoder passwordEncoder) {
+    static void setUp(
+            @Autowired UserRepository userRepository,
+            @Autowired PasswordEncoder passwordEncoder
+    ) {
         User user = User.builder()
-                .firstName(TEST_FIRST_NAME)
-                .lastName(TEST_LAST_NAME)
-                .email(TEST_EMAIL)
-                .password(passwordEncoder.encode(TEST_PASSWORD))
-                .role("ROLE_USER")
-                .enabled(true)
-                .build();
+                        .firstName(TEST_FIRST_NAME)
+                        .lastName(TEST_LAST_NAME)
+                        .email(TEST_EMAIL)
+                        .password(passwordEncoder.encode(TEST_PASSWORD))
+                        .role("ROLE_USER")
+                        .enabled(true)
+                        .build();
         userRepository.save(user);
     }
 
